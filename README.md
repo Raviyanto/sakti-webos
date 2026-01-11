@@ -1,15 +1,15 @@
-﻿# Sakti WebOS (Kiosk Edition)
+# Sakti WebOS (Kiosk Edition)
 
 **Sakti WebOS** adalah resep sistem operasi eksperimental berbasis **Alpine Linux** dan **Web Technology (Flask + HTML)**.
 Proyek ini mengubah instalasi Alpine Linux standar menjadi mesin Kiosk (Single App Mode) yang ringan, cepat, dan modern.
 
-## 📂 Struktur Repository
+## ?? Struktur Repository
 * **backend/**: Otak sistem (Flask).
 * **frontend/**: Wajah sistem (HTML/CSS).
 * **system/**: Konfigurasi vital OS.
 * **install.sh**: Skrip instalasi otomatis.
 
-## 🚀 Panduan Instalasi
+## ?? Panduan Instalasi
 
 ### Prasyarat
 1. Alpine Linux (Standard Version) sudah terinstal.
@@ -20,7 +20,7 @@ Proyek ini mengubah instalasi Alpine Linux standar menjadi mesin Kiosk (Single A
 Instal Git dan clone repository ini:
 ```bash
 apk add git
-git clone [https://github.com/Raviyanto/sakti-webos.git](https://github.com/Raviyanto/sakti-webos.git)
+git clone https://github.com/Raviyanto/sakti-webos.git
 cd sakti-webos
 ```
 
@@ -74,5 +74,5 @@ chmod 0440 /etc/sudoers.d/kiosk_shutdown
 **5. Selesai**
 Jalankan perintah `reboot`.
 
-## 📄 Lisensi
+## ?? Lisensi
 GPL-3.0 License
