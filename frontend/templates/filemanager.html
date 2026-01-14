@@ -6,61 +6,93 @@
         body { background: #000; color: #0f0; font-family: monospace; padding: 20px; }
         .file-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #333; }
         .file-name { cursor: pointer; color: #0f0; text-decoration: underline; flex-grow: 1; }
-        .btn-home { background: #0f0; color: #000; padding: 10px; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .btn-home { background: #0f0; color: #000; padding: 10px; text-decoration: none; display: inline-block; margin-bottom: 20px; margin-right: 10px; }
+        .btn-back { background: #333; color: #0f0; padding: 10px; border: 1px solid #0f0; cursor: pointer; display: inline-block; margin-bottom: 20px; }
         button { background: none; border: 1px solid #0f0; color: #0f0; cursor: pointer; margin-left: 10px; }
     </style>
 </head>
 <body>
-    <a href="/homepage" class="btn-home">⬅ KEMBALI</a>
+    <a href="/homepage" class="btn-home">⬅ KELUAR</a>
+    <div id="nav-folder"></div>
     <h1>📂 BERKAS SAKTI</h1>
     <div id="list">Memuat...</div>
 
     <script>
-        async function loadFiles() {
-            const res = await fetch('/api/files');
+        let currentPath = '';
+
+        async function loadFiles(path = '') {
+            currentPath = path;
+            const res = await fetch(`/api/files?path=${encodeURIComponent(path)}`);
             const files = await res.json();
-            const list = document.getElementById('list');
-            list.innerHTML = '';
             
+            const list = document.getElementById('list');
+            const nav = document.getElementById('nav-folder');
+            list.innerHTML = '';
+            nav.innerHTML = '';
+
+            // Tombol Kembali ke folder sebelumnya (jika tidak di root)
+            if (currentPath !== '' && currentPath !== '.') {
+                const backBtn = document.createElement('button');
+                backBtn.className = 'btn-back';
+                backBtn.innerHTML = '⬅ KEMBALI KE ATAS';
+                backBtn.onclick = () => {
+                    const parentPath = currentPath.split('/').slice(0, -1).join('/');
+                    loadFiles(parentPath);
+                };
+                nav.appendChild(backBtn);
+            }
+
             files.forEach(f => {
                 const div = document.createElement('div');
                 div.className = 'file-item';
+                
+                // Cek apakah folder atau file untuk menentukan aksi klik
+                const clickAction = f.is_dir 
+                    ? `loadFiles('${f.rel_path}')` 
+                    : `openInNotepad('${f.rel_path}')`;
+
                 div.innerHTML = `
-                    <span class="file-name" onclick="openInNotepad('${f.name}')">${f.is_dir ? '📁' : '📄'} ${f.name}</span>
+                    <span class="file-name" onclick="${clickAction}">
+                        ${f.is_dir ? '📁' : '📄'} ${f.name}
+                    </span>
                     <div>
-                        <button onclick="renameFile('${f.name}')">RENAME</button>
-                        <button onclick="deleteFile('${f.name}')" style="color:red; border-color:red;">HAPUS</button>
+                        <button onclick="renameFile('${f.rel_path}', '${f.name}')">RENAME</button>
+                        <button onclick="deleteFile('${f.rel_path}')" style="color:red; border-color:red;">HAPUS</button>
                     </div>
                 `;
                 list.appendChild(div);
             });
         }
 
-        function openInNotepad(name) {
-            // Pindah ke halaman notepad dengan parameter file
-            window.location.href = `/notepad?file=${name}`;
+        function openInNotepad(path) {
+            window.location.href = `/notepad?file=${encodeURIComponent(path)}`;
         }
 
-        async function deleteFile(name) {
-            if (confirm('Hapus ' + name + '?')) {
+        async function deleteFile(path) {
+            if (confirm('Hapus ' + path + '?')) {
                 await fetch('/api/delete-file', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({file: name})
+                    body: JSON.stringify({file: path})
                 });
-                loadFiles();
+                loadFiles(currentPath);
             }
         }
 
-        async function renameFile(name) {
-            const newName = prompt("Nama baru:", name);
+        async function renameFile(oldPath, nameOnly) {
+            const newName = prompt("Nama baru:", nameOnly);
             if (newName) {
+                // Mencari path folder induk agar rename tetap di folder yang sama
+                const pathArray = oldPath.split('/');
+                pathArray[pathArray.length - 1] = newName;
+                const newPath = pathArray.join('/');
+
                 await fetch('/api/rename-file', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({old_name: name, new_name: newName})
+                    body: JSON.stringify({old_name: oldPath, new_name: newPath})
                 });
-                loadFiles();
+                loadFiles(currentPath);
             }
         }
 

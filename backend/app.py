@@ -3,7 +3,7 @@ import subprocess
 import os
 import shutil
 
-app = Flask(__name__, 
+app = Flask(__name__,
             template_folder='../frontend/templates',
             static_folder='../frontend/static')
 
@@ -27,7 +27,7 @@ def start():
     return render_template('splash.html')
 
 @app.route('/homepage')
-def index(): 
+def index():
     return render_template('index.html')
 
 # --- FITUR LAMA (TETAP PATEN) ---
@@ -64,9 +64,30 @@ def api_shutdown():
     jalankan_sistem("/sbin/poweroff -f")
     return "<h1>SaktiOS sedang Shutdown...</h1>"
 
+# --- UPDATE INKREMENTAL: DUKUNGAN NAVIGASI FOLDER ---
 @app.route('/api/files')
 def list_files():
-    files = [{"name": e.name, "is_dir": e.is_dir(), "size": e.stat().st_size if e.is_file() else 0} for e in os.scandir(BASE_DIR)]
+    # Mengambil parameter path dari URL (contoh: ?path=frontend)
+    sub_path = request.args.get('path', '')
+    target_path = os.path.normpath(os.path.join(BASE_DIR, sub_path))
+    
+    # Keamanan: Jangan biarkan navigasi keluar dari BASE_DIR
+    if not target_path.startswith(BASE_DIR):
+        target_path = BASE_DIR
+        
+    files = []
+    try:
+        for e in os.scandir(target_path):
+            files.append({
+                "name": e.name,
+                "is_dir": e.is_dir(),
+                "size": e.stat().st_size if e.is_file() else 0,
+                # Kirim path relatif agar frontend tahu posisi folder saat ini
+                "rel_path": os.path.relpath(os.path.join(target_path, e.name), BASE_DIR)
+            })
+    except Exception as err:
+        return jsonify({"error": str(err)}), 500
+        
     return jsonify(files)
 
 @app.route('/api/read-file')
@@ -89,7 +110,8 @@ def save_note():
 @app.route('/api/delete-file', methods=['POST'])
 def del_file():
     path = os.path.join(BASE_DIR, request.json.get('file'))
-    if os.path.isfile(path): os.remove(path)
+    if os.path.isfile(path): 
+        os.remove(path)
     return jsonify({"status": "success"})
 
 @app.route('/api/rename-file', methods=['POST'])
