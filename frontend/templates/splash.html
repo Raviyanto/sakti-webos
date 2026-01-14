@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SaktiOS Loading</title>
+    <style>
+        body { 
+            background: #000; 
+            color: #0f0; 
+            font-family: 'Courier New', monospace; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0;
+            overflow: hidden;
+        }
+        .logo { font-size: 5em; font-weight: bold; letter-spacing: 10px; margin-bottom: 20px; }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid #111;
+            border-top: 5px solid #0f0;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .status { margin-top: 20px; font-size: 1.2em; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div class="logo">SAKTI OS</div>
+    <div class="spinner"></div>
+    <div class="status" id="stat">Initializing System...</div>
+
+    <script>
+        const texts = ["Loading Kernel...", "Syncing Files...", "Starting GUI...", "Welcome, Bung Sakti!"];
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i < texts.length) {
+                document.getElementById('stat').innerText = texts[i];
+                i++;
+            } else {
+                clearInterval(interval);
+                window.location.href = "/homepage";
+            }
+        }, 800);
+    </script>
+</body>
+</html>

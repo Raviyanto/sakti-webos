@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Berkas Sakti</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; }
+        .file-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #333; }
+        .file-name { cursor: pointer; color: #0f0; text-decoration: underline; flex-grow: 1; }
+        .btn-home { background: #0f0; color: #000; padding: 10px; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        button { background: none; border: 1px solid #0f0; color: #0f0; cursor: pointer; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <a href="/homepage" class="btn-home">⬅ KEMBALI</a>
+    <h1>📂 BERKAS SAKTI</h1>
+    <div id="list">Memuat...</div>
+
+    <script>
+        async function loadFiles() {
+            const res = await fetch('/api/files');
+            const files = await res.json();
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            
+            files.forEach(f => {
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                div.innerHTML = `
+                    <span class="file-name" onclick="openInNotepad('${f.name}')">${f.is_dir ? '📁' : '📄'} ${f.name}</span>
+                    <div>
+                        <button onclick="renameFile('${f.name}')">RENAME</button>
+                        <button onclick="deleteFile('${f.name}')" style="color:red; border-color:red;">HAPUS</button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function openInNotepad(name) {
+            // Pindah ke halaman notepad dengan parameter file
+            window.location.href = `/notepad?file=${name}`;
+        }
+
+        async function deleteFile(name) {
+            if (confirm('Hapus ' + name + '?')) {
+                await fetch('/api/delete-file', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({file: name})
+                });
+                loadFiles();
+            }
+        }
+
+        async function renameFile(name) {
+            const newName = prompt("Nama baru:", name);
+            if (newName) {
+                await fetch('/api/rename-file', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({old_name: name, new_name: newName})
+                });
+                loadFiles();
+            }
+        }
+
+        loadFiles();
+    </script>
+</body>
+</html>

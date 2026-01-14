@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id" class="notranslate">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <title>SaktiOS Dashboard</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        body { margin: 0; background: #0a0a0a; color: #00ff00; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        .logo { font-size: 4em; font-weight: bold; letter-spacing: 15px; margin-bottom: 20px; text-shadow: 0 0 20px #00ff00; }
+        .search-box { margin-bottom: 50px; width: 600px; }
+        input[type="text"] { width: 100%; padding: 15px; background: #1a1a1a; border: 2px solid #00ff00; border-radius: 30px; color: #00ff00; font-size: 1.2em; text-align: center; outline: none; }
+        .links { display: flex; gap: 30px; }
+        .link-card { width: 150px; padding: 20px; border: 1px solid #333; border-radius: 10px; text-align: center; text-decoration: none; color: #00d4ff; transition: 0.3s; background: #111; }
+        .link-card:hover { border-color: #00d4ff; box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3); }
+        .icon { font-size: 30px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="logo">SAKTI OS</div>
+    <div class="search-box">
+        <form action="https://www.google.com/search" method="GET">
+            <input type="text" name="q" placeholder="Cari di dunia digital..." autofocus>
+        </form>
+    </div>
+    <div class="links">
+        <a href="https://siarkita.com" class="link-card"><div class="icon">🎙️</div><div>Siar Kita</div></a>
+        <a href="https://siarkota.com" class="link-card"><div class="icon">🏙️</div><div>Siar Kota</div></a>
+        <a href="https://wikipedia.org" class="link-card"><div class="icon">📚</div><div>Wikipedia</div></a>
+    </div>
+</body>
+</html>

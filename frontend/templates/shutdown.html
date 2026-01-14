@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SaktiOS - Shutdown</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: monospace; text-align: center; padding-top: 100px; }
+        .box { border: 2px solid #0f0; display: inline-block; padding: 40px; }
+        .btn { padding: 15px 30px; font-weight: bold; cursor: pointer; margin: 10px; border: none; }
+        .yes { background: #f00; color: #fff; }
+        .no { background: #0f0; color: #000; text-decoration: none; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="box" id="m">
+        <h1>🔌 KONFIRMASI SHUTDOWN</h1>
+        <p>Matikan sistem SaktiOS?</p>
+        <button class="btn yes" onclick="document.getElementById('m').innerHTML='<h1>🔌 SHUTTING DOWN...</h1>'; window.location.href='/api/shutdown'">YA</button>
+        <a href="/homepage" class="btn no">BATAL</a>
+    </div>
+</body>
+</html>

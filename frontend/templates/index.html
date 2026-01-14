@@ -1,71 +1,39 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="notranslate">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sakti WebOS Menu</title>
+    <meta name="google" content="notranslate">
+    <title>SaktiOS</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <style>
-        body {
-            font-family: sans-serif;
-            background-color: #2c3e50;
-            color: white;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        h1 { margin-bottom: 40px; }
-        .menu-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-        .card {
-            background: #ecf0f1;
-            color: #2c3e50;
-            padding: 30px;
-            border-radius: 10px;
-            width: 150px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .card:hover { transform: scale(1.05); }
-        .icon { font-size: 40px; display: block; margin-bottom: 10px; }
+        body { margin: 0; background: #0a0a0a; color: #00ff00; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .header { margin-bottom: 20px; text-align: center; }
+        h1 { font-size: 3.5em; margin: 0; letter-spacing: 10px; text-shadow: 0 0 15px #00ff00; }
+        #clock { font-size: 1.5em; color: #00d4ff; margin: 10px 0; }
+        .grid { display: grid; grid-template-columns: repeat(3, 180px); gap: 20px; }
+        .btn { width: 180px; height: 180px; background: #1a1a1a; border: 2px solid #00ff00; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #00ff00; transition: 0.3s; cursor: pointer; }
+        .btn:hover { background: #00ff00; color: #000; box-shadow: 0 0 30px #00ff00; transform: scale(1.05); }
+        .icon { font-size: 45px; margin-bottom: 10px; }
+        .label { font-size: 14px; font-weight: bold; }
+        .shutdown { border-color: #ff4444; color: #ff4444; }
     </style>
 </head>
-<body>
-
-    <h1>SAKTI WEBOS</h1>
-
-    <div class="menu-container">
-        <div class="card" onclick="bukaBrowser()">
-            <span class="icon">??</span>
-            <b>Internet</b>
-        </div>
-
-        <a href="/kalkulator" class="card">
-            <span class="icon">??</span>
-            <b>Kalkulator</b>
-        </a>
-        
-        <div class="card" onclick="alert('Fitur Shutdown belum disambungkan')">
-            <span class="icon">??</span>
-            <b>Matikan</b>
-        </div>
+<body onload="startTime()">
+    <div class="header">
+        <h1>SAKTI OS</h1>
+        <div id="clock">00:00:00</div>
     </div>
-
+    <div class="grid">
+        <a href="/kalkulator" class="btn"><div class="icon">🧮</div><div class="label">KALKULATOR</div></a>
+        <a href="/notepad" class="btn"><div class="icon">📝</div><div class="label">EDITOR</div></a>
+        <a href="/filemanager" class="btn"><div class="icon">📂</div><div class="label">EXPLORER</div></a>
+        <div class="btn" onclick="openNativeBrowser()"><div class="icon">🌐</div><div class="label">BROWSER</div></div>
+        <a href="/reboot-page" class="btn"><div class="icon">🔄</div><div class="label">REBOOT</div></a>
+        <a href="/shutdown-page" class="btn shutdown"><div class="icon">⏻</div><div class="label">SHUTDOWN</div></a>
+    </div>
     <script>
-        function bukaBrowser() {
-            // Panggil backend Python untuk jalankan Chromium baru
-            fetch('/api/open-browser')
-                .then(response => console.log('Browser diluncurkan...'))
-                .catch(err => console.error(err));
-        }
+    function startTime() { const today = new Date(); document.getElementById('clock').innerHTML = today.toLocaleTimeString('id-ID'); setTimeout(startTime, 1000); }
+    function openNativeBrowser() { fetch('/api/open-native-browser').then(res => res.json()).then(data => { if(data.status !== 'success') alert('Error: ' + data.message); }); }
     </script>
-
 </body>
 </html>

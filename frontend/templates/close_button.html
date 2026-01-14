@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        body { margin: 0; overflow: hidden; background: transparent; }
+        .exit-btn {
+            width: 50px; height: 50px;
+            background: #e74c3c; color: white;
+            border: 2px solid #c0392b; border-radius: 50%;
+            font-weight: bold; font-size: 20px;
+            cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .exit-btn:hover { background: #ff0000; }
+    </style>
+</head>
+<body>
+    <div class="exit-btn" onclick="closeDesktop()">X</div>
+    <script>
+        function closeDesktop() {
+            fetch('/api/close-browser-external')
+                .then(() => window.close());
+        }
+    </script>
+</body>
+</html>
